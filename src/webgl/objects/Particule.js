@@ -12,7 +12,7 @@ export default class Particule extends THREE.Object3D {
     this.particules = [];
     this.positions = [];
 
-    var material = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+    var material = new THREE.MeshBasicMaterial({color: 0xff0000});
     var geometry = new THREE.SphereGeometry(2, 16, 16);
 
 
@@ -24,7 +24,7 @@ export default class Particule extends THREE.Object3D {
       this.mesh.position.y = Math.random() * 2 - 1;
       this.mesh.position.z = Math.random() * 2 - 1;
       this.mesh.position.normalize();
-      this.mesh.position.multiplyScalar(Math.random() * 10 + 650);
+      this.mesh.position.multiplyScalar(Math.random() * 10 + 850);
 
       this.positions[i] = [this.mesh.position.x, this.mesh.position.y, this.mesh.position.z];
 
@@ -48,7 +48,14 @@ export default class Particule extends THREE.Object3D {
     var cpl = Complex(THREE);
     var complex = cpl(sc);
 
-    var material2 = new THREE.MeshBasicMaterial({color: 0xff0ff0, wireframe: true});
+    var material2 = new THREE.MeshDepthMaterial({color: 0x222222, wireframe: true, shading: THREE.SmoothShadin, wireframeLinewidth: 2 });
+
+
+    // this.mesh3 = THREE.SceneUtils.createMultiMaterialObject(complex, [
+    //   // new THREE.MeshLambertMaterial({color: 0xffffff}),
+    //   new THREE.MeshBasicMaterial({color: 0x222222, wireframe: true})
+    // ]);
+
 
     this.mesh3 = new THREE.Mesh(complex, material2);
     this.mesh2 = new THREE.Line(complex, new THREE.LineBasicMaterial({color: 0xff00ff, opacity: 0.5}));
