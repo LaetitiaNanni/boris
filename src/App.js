@@ -32,8 +32,8 @@ export default class App {
     // this.camera.position.z = 100;
     this.scene = new THREE.Scene();
 
-    this.mesh = new Particule();
-    this.scene.add(this.mesh);
+    this.particules = new Particule();
+    this.scene.add(this.particules);
 
     // LIGHT
     var spherelight = new THREE.PointLight(0xfffccc);
@@ -107,7 +107,6 @@ export default class App {
 
     // raf(this.render);
 
-
   }
 
   handleResize() {
@@ -118,7 +117,11 @@ export default class App {
 
   render() {
     raf(this.render);
+    let t = 0.0001 * Date.now();
     this.stats.begin();
+
+    this.particules.update(t);
+
     // this.controls.update();
     // this.mesh.cubeCamera.updateCubeMap(this.renderer, this.scene);
     this.renderer.render(this.scene, this.camera);
