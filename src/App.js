@@ -34,8 +34,8 @@ export default class App {
     this.camera.position.z = 1000;
     this.scene = new THREE.Scene();
 
-    this.particules = new Structure();
-    this.scene.add(this.particules);
+    this.structure = new Structure();
+    this.scene.add(this.structure);
 
     // LIGHT
     var spherelight = new THREE.PointLight(0xfffccc);
@@ -93,9 +93,15 @@ export default class App {
     ffog.add(this.scene.fog, 'far', 100,3000);
 
     var fstruc = this.gui.addFolder('Structure');
-    fstruc.addColor(colors, 'particuleColor').onChange(() => { this.particules.mesh.material.color.setHex(colors.fogColor); });
-    fstruc.addColor(colors, 'particuleColor').onChange(() => { this.line.material.color.setHex(colors.fogColor); });
-
+    fstruc.addColor(colors, 'particuleColor').onChange(() => {
+      let particules = this.structure.particules;
+      for(let i = 0; i < particules.length; i++) {
+        particules[i].material.color.setHex(colors.particuleColor);
+      }
+    });
+    fstruc.addColor(colors, 'lineColor').onChange(() => { 
+      this.structure.line.material.color.setHex(colors.lineColor); 
+    });
 
   }
   guiChanged() {
@@ -135,7 +141,7 @@ export default class App {
     this.stats.begin();
 
     if(this.isAnimate) 
-      this.particules.update(t);
+      this.structure.update(t);
 
     // this.controls.update();
     // this.mesh.cubeCamera.updateCubeMap(this.renderer, this.scene);

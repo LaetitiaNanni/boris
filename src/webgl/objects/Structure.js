@@ -1,13 +1,11 @@
 'use strict';
 
 import THREE from 'three';
-import triangulate from 'delaunay-triangulate';
-import Complex from 'three-simplicial-complex';
-import top from 'simplicial-complex';
 import '../shaders/FresnelShader';
 
 // objects
 import Particule from './Particule';
+import Line from './Line';
 
 
 
@@ -40,23 +38,8 @@ export default class Structure extends THREE.Object3D {
     }
 
 
-    this.triangles = triangulate(this.positions);
-
-    this.sc = {
-        positions: this.positions,
-        cells: top.unique(top.skeleton(this.triangles, 3))
-    };
-
-    this.cpl = Complex(THREE);
-    this.complex = this.cpl(this.sc);
-
-    var material2 = new THREE.MeshLambertMaterial({color: 0x2222ff, wireframe: true, fog: true, wireframeLinewidth: 2 });
-
-
-    this.mesh3 = new THREE.Mesh(this.complex, material2);
-    //this.mesh3 = new THREE.Line(this.complex, new THREE.LineBasicMaterial({color: 0xff00ff, opacity: 0.5}));
-
-    this.add(this.mesh3);
+    this.line = new Line(this.positions);
+    this.add(this.line);
 
   }
 
@@ -67,21 +50,7 @@ export default class Structure extends THREE.Object3D {
       sphere.position.y = 650 * Math.sin(t + i * 1.1);
       this.positions[i] = [sphere.position.x, sphere.position.y, sphere.position.z];
     }
-    this.updateDelaunay(this.positions);
-  }
+    this.line.update(this.positions);
 
-  updateDelaunay(points) {
-
-    this.triangles = triangulate(points);
-
-    this.sc = {
-        positions: points,
-        cells: top.unique(top.skeleton(this.triangles, 2))
-        // cells: this.triangles
-    };
-
-    this.complex = this.cpl(this.sc);
-
-    this.mesh3.geometry = this.complex;
   }
 }
