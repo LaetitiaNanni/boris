@@ -4,9 +4,10 @@ import THREE from 'three';
 import bindAll from 'lodash.bindall';
 import raf from 'raf';
 import resize from 'brindille-resize';
+import * as colors from './webgl/config/colors';
 
 //objects
-import Particule from './webgl/objects/Particule';
+import Structure from './webgl/objects/Structure';
 import Line from './webgl/objects/Line';
 
 //shaders
@@ -26,13 +27,14 @@ export default class App {
 
     bindAll(this, 'render', 'handleResize', 'guiChanged');
 
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+    this.isAnimate = false;
+
+
+    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
     this.camera.position.z = 1000;
-    // this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-    // this.camera.position.z = 100;
     this.scene = new THREE.Scene();
 
-    this.particules = new Particule();
+    this.particules = new Structure();
     this.scene.add(this.particules);
 
     // LIGHT
@@ -46,7 +48,7 @@ export default class App {
     // light.rotation.set( 0, Math.PI/2, 0 );
 
     this.scene.add(this.light);
-
+    this.scene.fog = new THREE.Fog( 0x000000, 500, 2000 );
     // add subtle ambient lighting
     this.ambientLight = new THREE.AmbientLight(0xffffff);
     this.ambientLight.intensity = 22.2;
@@ -54,7 +56,7 @@ export default class App {
     this.scene.add(this.ambientLight);
 
 
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(resize.width, resize.height);
     $container.appendChild(this.renderer.domElement);
 
@@ -64,26 +66,38 @@ export default class App {
 
     raf(this.render);
 
+    this.addGui();
     
-    /// GUI
+
+  }
+  addGui() {
+    /// GUI stats
     this.stats = new Stats();
     this.stats.setMode(0); // 0: fps, 1: ms
-
     this.stats.domElement.style.position = 'absolute';
     this.stats.domElement.style.left = '0px';
     this.stats.domElement.style.top = '0px';
-     
     document.body.appendChild( this.stats.domElement );
 
-  
 
-    var gui = new dat.GUI();
+    /// datGUI
+    this.gui = new dat.GUI();
 
-    // gui.add( this.effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( this.guiChanged );
+    var fglobals = this.gui.addFolder('Global');
+    fglobals.add(this, 'isAnimate');
+    fglobals.open();
 
-    // this.guiChanged();
+    var ffog = this.gui.addFolder('Fog');
+    ffog.addColor(colors, 'fogColor').onChange(() => { this.scene.fog.color.setHex(colors.fogColor); });
+    ffog.add(this.scene.fog, 'near', 0,3000);
+    ffog.add(this.scene.fog, 'far', 100,3000);
+
+    var fstruc = this.gui.addFolder('Structure');
+    fstruc.addColor(colors, 'particuleColor').onChange(() => { this.particules.mesh.material.color.setHex(colors.fogColor); });
+    fstruc.addColor(colors, 'particuleColor').onChange(() => { this.line.material.color.setHex(colors.fogColor); });
+
+
   }
-  
   guiChanged() {
     
     var distance = 400000;
@@ -120,7 +134,8 @@ export default class App {
     let t = 0.0001 * Date.now();
     this.stats.begin();
 
-    this.particules.update(t);
+    if(this.isAnimate) 
+      this.particules.update(t);
 
     // this.controls.update();
     // this.mesh.cubeCamera.updateCubeMap(this.renderer, this.scene);

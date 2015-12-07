@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "brindille-resize": "^0.1.3",
+    "delaunay-fast": "^1.0.1",
     "delaunay-triangulate": "^1.1.6",
     "domready": "^1.0.7",
     "gsap": "^1.17.0",
