@@ -27,17 +27,20 @@ export default class Line extends THREE.Object3D {
     this.add(this.mesh);
   }
 
-  update(points) {
+  update(points, delaunay) {
     this.points = points;
-    this.triangles = triangulate(this.points);
+
+    if (delaunay) {
+      this.triangles = top.unique(top.skeleton(triangulate(this.points), 3));
+    }
 
     this.sc = {
         positions: this.points,
-        cells: top.unique(top.skeleton(this.triangles, 2))
-        // cells: this.triangles
+        cells: this.triangles
     };
 
     this.complex = this.cpl(this.sc);
     this.mesh.geometry = this.complex;
+
   }
 }

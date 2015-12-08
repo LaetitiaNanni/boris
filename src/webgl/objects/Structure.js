@@ -15,7 +15,8 @@ export default class Structure extends THREE.Object3D {
 
     this.particules = [];
     this.positions = [];
-
+    this.interval = 0.1;
+    this.startT = 0.0001 * Date.now();
 
     for (var i = 0; i < 50; i++) {
 
@@ -44,13 +45,24 @@ export default class Structure extends THREE.Object3D {
   }
 
   update(t) {
+
     for (var i = 0; i < this.particules.length; i++) {
       var sphere = this.particules[i];
       sphere.position.x = 650 * Math.cos(t + i);
-      sphere.position.y = 650 * Math.sin(t + i * 1.1);
+      sphere.position.z = 650 * Math.sin(t + i * 1.1);
+
       this.positions[i] = [sphere.position.x, sphere.position.y, sphere.position.z];
     }
-    this.line.update(this.positions);
+
+  console.log((t - this.startT) + 'ms elapsed');
+
+    if ((t - this.startT) >= this.interval) {
+      console.log('ok');
+      this.line.update(this.positions, true);
+      this.startT = t;
+    } else {
+      this.line.update(this.positions);
+    }
 
   }
 }
