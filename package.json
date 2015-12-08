@@ -4,7 +4,7 @@
   "description": "ES6 starter for quick prototypes",
   "main": "src/index.js",
   "scripts": {
-    "start": "budo src/index.js:build.js --live --dir static -t babelify | garnish",
+    "start": "budo src/index.js:build.js --live --dir static -t babelify -g glslify| garnish",
     "prod": "browserify src/index.js --t babelify | uglifyjs -nm > static/build.js"
   },
   "keywords": [
@@ -28,6 +28,7 @@
     "delaunay-fast": "^1.0.1",
     "delaunay-triangulate": "^1.1.6",
     "domready": "^1.0.7",
+    "glslify": "^4.0.0",
     "gsap": "^1.17.0",
     "lodash.bindall": "^3.1.0",
     "raf": "^3.1.0",

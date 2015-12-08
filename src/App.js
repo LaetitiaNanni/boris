@@ -25,7 +25,7 @@ export default class App {
 
     console.log('App.constructor()');
 
-    bindAll(this, 'render', 'handleResize', 'guiChanged');
+    bindAll(this, 'render', 'handleResize');
 
     this.isAnimate = false;
 
@@ -59,6 +59,8 @@ export default class App {
     this.renderer = new THREE.WebGLRenderer({antialias: true});
     this.renderer.setSize(resize.width, resize.height);
     $container.appendChild(this.renderer.domElement);
+    this.renderer.gammaInput = true;
+    this.renderer.gammaOutput = true;
 
     this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
     // this.controls.addEventListener( 'change', this.render );
@@ -82,6 +84,18 @@ export default class App {
 
     /// datGUI
     this.gui = new dat.GUI();
+    var config = () => {
+      this.uniforms = "#ffae23";
+    }
+
+    var config = {
+      uniforms: {
+        'c': 0.3,
+        'p': 2.7
+      }
+    }
+
+
 
     var fglobals = this.gui.addFolder('Global');
     fglobals.add(this, 'isAnimate');
@@ -93,41 +107,32 @@ export default class App {
     ffog.add(this.scene.fog, 'far', 100,3000);
 
     var fstruc = this.gui.addFolder('Structure');
+    fstruc.open();
     fstruc.addColor(colors, 'particuleColor').onChange(() => {
       let particules = this.structure.particules;
       for(let i = 0; i < particules.length; i++) {
         particules[i].material.color.setHex(colors.particuleColor);
       }
     });
+
+    // fstruc.add(config.uniforms, 'c', 0.0, 1.0, 0.01).onChange(() => {
+    //   let particules = this.structure.particules;
+    //   for(let i = 0; i < particules.length; i++) {
+    //     particules[i].glow.material.uniforms[ "c" ].value = config.uniforms.c;
+    //   }
+    // });
+    // fstruc.add(config.uniforms, 'p', 0.0, 6.0, 0.01).onChange(() => {
+    //   let particules = this.structure.particules;
+    //   for(let i = 0; i < particules.length; i++) {
+    //     particules[i].glow.material.uniforms[ "p" ].value = config.uniforms.p;
+    //   }
+    // });
     fstruc.addColor(colors, 'lineColor').onChange(() => { 
       this.structure.line.material.color.setHex(colors.lineColor); 
     });
 
   }
-  guiChanged() {
-    
-    var distance = 400000;
-    var uniforms = this.sky.uniforms;
-    uniforms.turbidity.value = this.effectController.turbidity;
-    uniforms.reileigh.value = this.effectController.reileigh;
-    uniforms.luminance.value = this.effectController.luminance;
-    uniforms.mieCoefficient.value = this.effectController.mieCoefficient;
-    uniforms.mieDirectionalG.value = this.effectController.mieDirectionalG;
 
-    var theta = Math.PI * ( this.effectController.inclination - 0.5 );
-    var phi = 2 * Math.PI * ( this.effectController.azimuth - 0.5 );
-
-    this.sunSphere.position.x = distance * Math.cos( phi );
-    this.sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
-    this.sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
-
-    this.sunSphere.visible = this.effectController.sun;
-
-    this.sky.uniforms.sunPosition.value.copy( this.sunSphere.position );
-
-    // raf(this.render);
-
-  }
 
   handleResize() {
     this.camera.aspect = resize.width / resize.height;
