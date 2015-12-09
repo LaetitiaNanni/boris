@@ -2,8 +2,10 @@
 
 import domready from 'domready';
 import Detector from './webgl/three/Detector';
-
 import App from './App';
+
+import 'gsap';
+
 
 let app;
 

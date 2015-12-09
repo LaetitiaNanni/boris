@@ -1,3 +1,3 @@
-export var fogColor = 0x000000;
-export var lineColor = 0x2222ff;
-export var particuleColor = 0xffaa00;
+export var fogColor = 0x010102;
+export var lineColor = 0x2b2b5f;
+export var particuleColor = 0x8282f2;
